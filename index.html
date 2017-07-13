@@ -1,0 +1,111 @@
+<!doctype html> 
+<html lang="en"> 
+<head> 
+	<meta charset="UTF-8" />
+	<title>Melon Quest</title>
+	<script type="text/javascript" src="phaser.js"></script>
+    <style type="text/css">
+        body {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+<script type="text/javascript">
+
+var game = new Phaser.Game(400, 400, Phaser.AUTO, '', { preload: preload, create: create }, true);
+
+var melon;
+var melonSquirts;
+var swordReady;
+var swordAttack;
+
+var battleTheme;
+var victory;
+
+var melonHealth = 50;
+var melonHealthText;
+
+function preload() 
+{
+    game.load.image("melon", "lib/melon.png");
+    game.load.image("melonEnd", "lib/melonEnd.png");
+	game.load.image("melonSquirts", "lib/melonSquirts.png");
+	game.load.image("swordAttack", "lib/swordAttack.png");
+	game.load.image("swordReady", "lib/swordReady.png");
+	game.load.image("melonEnd", "lib/melonEnd.png");
+	
+	game.load.audio("battleTheme", "lib/battletheme.mp3");
+	game.load.audio("victory", "lib/victory.mp3");
+}
+
+function create() 
+{
+    game.add.text(15, 0, "WELCOME TO MELON QUEST", { font: "helvetica", fontSize: "25px", fill: "red" });
+	
+	battleTheme = game.add.audio("battleTheme");
+	victory = game.add.audio("victory");
+	
+	battleTheme.play();
+	
+	melon = game.add.sprite(25, 175, "melon");
+	melonSquirts = game.add.sprite(25, 175, "melonSquirts");
+	
+	swordReady = game.add.sprite(125, 75, "swordReady");
+	swordAttack = game.add.sprite(125, 75, "swordAttack");
+	
+	swordReady.inputEnabled = true;
+	swordReady.events.onInputDown.add(onDown, this);
+	swordReady.events.onInputUp.add(onUp, this);
+	
+	melonSquirts.visible = false;
+	swordAttack.visible = false;
+	
+	melonHealthText = game.add.text(15, 370, "Melon Health: " + melonHealth, { font: "helvetica", fontSize: "25px", fill: "red" });
+}
+
+function onDown()
+{
+	if (melonHealth > 0)
+	{
+		melonSquirts.visible = true;
+		swordReady.visible = false;
+		swordAttack.visible = true;
+		
+		melonHealth -= 1;
+	}
+}
+
+function onUp()
+{
+	if (melonHealth > 0)
+	{
+		melonSquirts.visible = false;
+		swordReady.visible = true;
+		swordAttack.visible = false;
+		
+		//melonHealth -= 5;
+		melonHealthText.text = "Melon Health: " + melonHealth;
+	}
+	
+	else if (melonHealth == 0)
+	{
+		melonHealth--;
+		melon.visible = false;
+		swordReady.visible = true;
+		melonSquirts.visible = false;
+		swordAttack.visible = false;
+		game.add.sprite(25, 175, "melonEnd");
+		
+		battleTheme.stop();
+		victory.play();
+		
+		melonHealthText.text = "You won! Yolo swag!"
+	}
+}
+
+</script>
+
+</body>
+</html>
